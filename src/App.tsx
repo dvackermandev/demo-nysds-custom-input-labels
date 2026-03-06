@@ -5,17 +5,32 @@ import './styles/global.css'
 import './styles/utilities.css'
 import Message from './Message';
 
+const defaultErrors = {
+    emptyDocType: false,
+    emptyBeginDate: false,
+    futureBeginDate: false,
+    beginDateGreaterThanEndDate: false,
+    emptyEndDate: false,
+    futureEndDate: false,
+    endDateLessThanBeginDate: false,
+    emptyNotice: false,
+    noData: false,
+    errorResponse: false,
+    serviceUnavailable: false
+  }
 function App() {
   const [isGenerating, setIsGenerating] = useState(false)
-  const [errors, setErrors] = useState({} as any)
+  const [errors, setErrors] = useState(defaultErrors)
   const [docType, setDocType] = useState("")
-  const [begin, setBegin] = useState({} as any)
-  const [end, setEnd] = useState({} as any)
+  const [begin, setBegin] = useState("")
+  const [end, setEnd] = useState("")
+  const [selectedNotice, setSelectedNotice] = useState("")
   const [allDates, setAllDates] = useState(false)
-  const [selectedNotice, setSelectedNotice] = useState({} as any)
+  const [success, setSuccess] = useState(false)
 
   const isSos = docType === 'sos'
-  const isReport = (value: string) => value === 'r1' || value === 'sos' || value === 'r3'
+  const isReport = docType === 'r1' || docType === 'r3'
+  const isDocument = docType === 'monthly-notice'
 
   // Start event handlers
   const selectTypeRef = useRef<any>(null)
@@ -43,10 +58,10 @@ function App() {
       // the nys-input event does not fire when the value is entered by clicking
       // the calendar ui.
       beginDatepickerRef.current.addEventListener('nys-blur', (event: any) => {
-        setBegin(event.target)
+        setBegin(event.target.value)
       })
       beginDatepickerRef.current.addEventListener('nys-input', (event: any) => {
-        setBegin(event.target)
+        setBegin(event.target.value)
       })
     }
   })
@@ -55,10 +70,11 @@ function App() {
   useEffect(() => {
     if (endDatepickerRef.current) {
       endDatepickerRef.current.addEventListener('nys-blur', (event: any) => {
-        setEnd(event.target)
+        setEnd(event.target.value)
       })
       endDatepickerRef.current.addEventListener('nys-input', (event: any) => {
-        setEnd(event.target)
+        console.log(event.target.value)
+        setEnd(event.target.value)
       })
     }
   })
@@ -67,14 +83,46 @@ function App() {
   useEffect(() => {
     if (selectNoticeRef.current) {
       selectNoticeRef.current.addEventListener('nys-change', (event: any) => {
-        setDocType(event.detail.value)
+        setSelectedNotice(event.detail.value)
       })
     }
   })
   // End event handlers
 
-  const clearForm = () => {}
-  const handleGenerate = () => {}
+  const clearForm = () => {
+    setDocType("")
+    setAllDates(false)
+    setErrors(defaultErrors)
+    setSuccess(false)
+  }
+  const handleGenerate = async () => {
+    const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+    if (checkIfInvalid()) return
+    setErrors(defaultErrors)
+    setSuccess(false)
+    setIsGenerating(true)
+    // Mock api request
+    await delay(2000)
+    setIsGenerating(false)
+    const randomInt = Math.floor(Math.random() * (4 - 1 + 1) + 1)
+    if (randomInt === 1) {setSuccess(true)}
+    else if (randomInt === 2) {setErrors(prev => ({...prev, noData: true}))}
+    else if (randomInt === 3) {setErrors(prev => ({...prev, errorResponse: true}))}
+    else if (randomInt === 4) {setErrors(prev => ({...prev, serviceUnavailable: true}))}
+
+  }
+  const checkIfInvalid = () => {
+    const emptyDocType = !docType
+    const emptyNotice = isDocument && !selectedNotice
+    const emptyBeginDate = isReport && !begin
+    const emptyEndDate = isReport && !end
+    const futureBeginDate = isReport  && !!begin && new Date(begin) > new Date()
+    const futureEndDate = isReport  && !!end && new Date(end) > new Date()
+    const beginDateGreaterThanEndDate = isReport && !!begin && !!end && begin > end
+    const endDateLessThanBeginDate = isReport && !!begin && !!end && end < begin
+    setErrors(prev => ({...prev, emptyDocType, emptyNotice, emptyBeginDate, emptyEndDate, futureBeginDate, futureEndDate, beginDateGreaterThanEndDate ,endDateLessThanBeginDate}))
+    return (emptyDocType || emptyNotice || emptyBeginDate || emptyEndDate || futureBeginDate || futureEndDate)
+  }
 
   const invalidDateError = 'Please enter a valid value. The field is incomplete or has an invalid date.'
   return (
@@ -82,7 +130,7 @@ function App() {
       <div className="nys-grid-row mb-2 sm:mb-4">
         <div className="nys-tablet:nys-grid-col-6">
           <div className="input-label-wrap nys-tablet:nys-flex-justify-end">
-            <label htmlFor="select-type" className={`input-label ${errors.show && errors.selectType && 'p-error'} ${isGenerating && 'p-disabled'}`}>Type*</label>
+            <label htmlFor="select-type" className={`input-label ${errors.emptyDocType && 'error'} ${isGenerating && 'disabled'}`}>Type*</label>
           </div>
         </div>
         <div className="nys-tablet:nys-grid-col-6">
@@ -91,8 +139,8 @@ function App() {
             value={docType}
             id="select-type"
             disabled={isGenerating}
-            showError={errors.show && errors.selectType}
-            errorMessage={errors.show && (errors.selectType && "Document type is required.") || ""}
+            showError={errors.emptyDocType}
+            errorMessage={errors.emptyDocType ? "Document type is required." : ""}
           >
             {demoData.reportTypes.map((item, i) => {
               return <optgroup key={i} label={item.label}>{item.items.map((item, i) => { return <option key={i} value={item.value}>{item.label}</option> })}</optgroup>
@@ -100,11 +148,11 @@ function App() {
           </nys-select>
         </div>
       </div>
-      {isReport(docType) && <>
+      {(isReport || isSos) && <>
         <div className="nys-grid-row mb-2 sm:mb-4">
           <div className="nys-tablet:nys-grid-col-6">
             <div className="input-label-wrap toggle nys-tablet:nys-flex-justify-end">
-              <label htmlFor='docgen-toggle' className={`input-label ${isGenerating && 'p-disabled'}`}>All Dates</label>
+              <label htmlFor='docgen-toggle' className={`input-label ${isGenerating && 'disabled'}`}>All Dates</label>
             </div>
           </div>
           <div className="nys-tablet:nys-grid-col-6">
@@ -113,23 +161,21 @@ function App() {
         </div>
         <div className="nys-grid-row mb-2 sm:mb-4">
           <div className="nys-tablet:nys-grid-col-6">
-            <div className="h-[34px] sm:h-[48px] mr-[10px] nys-display-flex items-center nys-tablet:nys-flex-justify-end">
-              <label htmlFor='begin-datepicker' className={`input-label ${errors.show && (errors.emptyBeginDate || errors.futureBeginDate || errors.beginDateGreaterThanEndDate) && 'p-error'} ${(allDates || isGenerating || isSos) && 'p-disabled'}`}>Begin*</label>
+            <div className="input-label-wrap nys-tablet:nys-flex-justify-end">
+              <label htmlFor='begin-datepicker' className={`input-label ${(errors.emptyBeginDate || errors.futureBeginDate || errors.beginDateGreaterThanEndDate) && 'error'} ${(allDates || isGenerating || isSos) && 'disabled'}`}>Begin*</label>
             </div>
           </div>
           <div className="nys-tablet:nys-grid-col-6">
             <nys-datepicker
-              label="test"
-              showError={errors.show && (errors.emptyBeginDate || errors.futureBeginDate || errors.beginDateGreaterThanEndDate)}
+              showError={errors.emptyBeginDate || errors.futureBeginDate || errors.beginDateGreaterThanEndDate}
               errorMessage={
-                errors.show &&
                 (errors.emptyBeginDate && "Begin date is required" ||
                   errors.futureBeginDate && "Future begin date is not allowed." ||
                   errors.beginDateGreaterThanEndDate && "Begin date must be before end date.") ||
                 invalidDateError
               }
               ref={beginDatepickerRef}
-              value={begin}
+              value={begin ? begin : undefined}
               disabled={allDates || isGenerating || isSos}
               width="full"
               id="begin-datepicker"
@@ -139,44 +185,43 @@ function App() {
         </div>
         <div className="nys-grid-row mb-2 sm:mb-4">
           <div className="nys-tablet:nys-grid-col-6">
-            <div className="h-[34px] sm:h-[48px] mr-[10px] nys-display-flex items-center nys-tablet:nys-flex-justify-end">
-              <label htmlFor='end-datepicker' className={`input-label ${errors.show && (errors.emptyEndDate || errors.futureEndDate || errors.endDateLessThanBeginDate) && 'p-error'} ${(allDates || isGenerating || isSos) && 'p-disabled'}`}>End*</label>
+            <div className="input-label-wrap nys-tablet:nys-flex-justify-end">
+              <label htmlFor='end-datepicker' className={`input-label ${(errors.emptyEndDate || errors.futureEndDate || errors.endDateLessThanBeginDate) && 'error'} ${(allDates || isGenerating || isSos) && 'disabled'}`}>End*</label>
             </div>
           </div>
           <div className="nys-tablet:nys-grid-col-6">
             <nys-datepicker
-              showError={errors.show && (errors.emptyEndDate || errors.futureEndDate || errors.endDateLessThanBeginDate)}
+              showError={errors.emptyEndDate || errors.futureEndDate || errors.endDateLessThanBeginDate}
               errorMessage={
-                errors.show &&
                 (errors.emptyEndDate && "End date is required" ||
                   errors.futureEndDate && "Future end date is not allowed." ||
                   errors.endDateLessThanBeginDate && "End date must be after begin date.") ||
                 invalidDateError
               }
               ref={endDatepickerRef}
-              value={end}
+              value={end ? end : undefined}
               disabled={allDates || isGenerating || isSos}
               width="full"
               id="end-datepicker"
               name="end-datepicker"
-              className={`${errors.show && errors.emptyEndDate && 'p-invalid'}`}
+              className={`${errors.emptyEndDate && 'p-invalid'}`}
             ></nys-datepicker>
           </div>
         </div>
       </>}
-      {docType === 'document' && <div className="nys-grid-row mb-2 sm:mb-4">
+      {isDocument && <div className="nys-grid-row mb-2 sm:mb-4">
         <div className="nys-tablet:nys-grid-col-6">
-          <div className="input-label h-[34px] sm:h-[48px] mr-[10px] nys-display-flex items-center nys-tablet:nys-flex-justify-end">
-            <label htmlFor='select-notice' className={`input-label ${errors.show && errors.noticeMonthYear && 'p-error'} ${isGenerating && 'p-disabled'}`}>Month &amp; Year*</label>
+          <div className="input-label-wrap nys-tablet:nys-flex-justify-end">
+            <label htmlFor='select-notice' className={`input-label ${errors.emptyNotice && 'error'} ${isGenerating && 'disabled'}`}>Month &amp; Year*</label>
           </div>
         </div>
         <div className="nys-tablet:nys-grid-col-6">
           <nys-select
-            showError={errors.show && errors.noticeMonthYear}
-            errorMessage={errors.show && errors.noticeMonthYear ? "Month & Year is required." : ""}
+            showError={errors.emptyNotice}
+            errorMessage={errors.emptyNotice ? "Month & Year is required." : ""}
             ref={selectNoticeRef}
             id="select-notice"
-            value={selectedNotice?.date}
+            value={selectedNotice}
             disabled={isGenerating}>
             {demoData.monthlyNotices.map((item, i) => {
               return <option key={i} value={item.value}>{item.label}</option>
@@ -184,11 +229,12 @@ function App() {
           </nys-select>
         </div>
       </div>}
-       <Message nysType='danger' className="error-response-message">No data found.</Message>
-      {errors.errorResponse && <Message nysType='danger' className="error-response-message">An error occurred while processing the request.</Message>}
-      {errors.serviceUnavailable && <Message nysType='danger' className="error-response-message">Service is not available.</Message>}
+      {success && <Message nysType='success' className="response-message">Success!</Message>}
+      {errors.noData && <Message nysType='danger' className="response-message">No data found.</Message>}
+      {errors.errorResponse && <Message nysType='danger' className="response-message">An error occurred while processing the request.</Message>}
+      {errors.serviceUnavailable && <Message nysType='danger' className="response-message">Service is not available.</Message>}
 
-    <div className='nys-display-flex'>
+      <div className='nys-display-flex'>
         <nys-button className="nys-margin-r-200" onClick={clearForm} label="Clear" variant="outline" disabled={isGenerating} fullWidth></nys-button>
         <nys-button onClick={handleGenerate} label="Generate" disabled={isGenerating} fullWidth></nys-button>
       </div>

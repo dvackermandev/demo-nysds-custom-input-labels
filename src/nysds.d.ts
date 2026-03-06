@@ -208,7 +208,7 @@ declare global {
         label?: string;
         name?: string;
         description?: string;
-        value?: string;
+        value?: string | Date;
         required?: boolean;
         optional?: boolean;
         disabled?: boolean;
