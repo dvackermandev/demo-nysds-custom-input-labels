@@ -11,3 +11,4 @@
 
 ## TODO:
 - Add responsive styles.
+- Improve types.
