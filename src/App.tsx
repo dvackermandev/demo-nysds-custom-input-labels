@@ -35,7 +35,7 @@ function App() {
   useEffect(() => {
     if (selectTypeRef.current) {
       selectTypeRef.current.addEventListener('nys-change', (event: any) => {
-        setErrors(prev => ({ ...prev, emptyDocType: false }))
+        setErrors(defaultErrors)
         setDocType(event.detail.value)
       })
     }
@@ -128,8 +128,7 @@ function App() {
 
   const invalidDateError = 'Please enter a valid value. The field is incomplete or has an invalid date.'
   return (
-    <form>
-      <div className="outer-wrap">
+    <form className="outer-wrap">
         <div className="nys-grid-row nys-margin-b-250 sm:mb-4">
           <div className="nys-tablet:nys-grid-col-6">
             <div className="input-label-wrap nys-tablet:nys-flex-justify-end">
@@ -142,8 +141,10 @@ function App() {
               value={docType}
               id="select-type"
               disabled={isGenerating}
+              aria-disabled={isGenerating}
               showError={errors.emptyDocType}
               errorMessage={errors.emptyDocType ? "Document type is required." : ""}
+              aria-label="Select Type"
             >
               {demoData.reportTypes.map((item, i) => {
                 return <optgroup key={i} label={item.label}>{item.items.map((item, i) => { return <option key={i} value={item.value}>{item.label}</option> })}</optgroup>
@@ -159,7 +160,15 @@ function App() {
               </div>
             </div>
             <div className="nys-tablet:nys-grid-col-6">
-              <nys-toggle ref={toggleRef} id="docgen-toggle" checked={allDates || isSos ? true : undefined} disabled={isGenerating || isSos ? true : undefined} size="md" icon={false} noIcon></nys-toggle>
+              <nys-toggle 
+                ref={toggleRef}
+                id="docgen-toggle"
+                checked={allDates || isSos ? true : undefined}
+                disabled={isGenerating || isSos ? true : undefined} 
+                aria-disabled={isGenerating || isSos}
+                size="md" 
+                noIcon
+                aria-label="Toggle All Dates"></nys-toggle>
             </div>
           </div>
           <div className="nys-grid-row nys-margin-b-250">
@@ -180,9 +189,11 @@ function App() {
                 ref={beginDatepickerRef}
                 value={begin ? begin : undefined}
                 disabled={allDates || isGenerating || isSos}
+                aria-disabled={allDates || isGenerating || isSos}
                 width="full"
                 id="begin-datepicker"
                 name="begin-datepicker"
+                aria-label="Select Begin Date"
               ></nys-datepicker>
             </div>
           </div>
@@ -204,10 +215,12 @@ function App() {
                 ref={endDatepickerRef}
                 value={end ? end : undefined}
                 disabled={allDates || isGenerating || isSos}
+                aria-disabled={allDates || isGenerating || isSos}
                 width="full"
                 id="end-datepicker"
                 name="end-datepicker"
                 className={`${errors.emptyEndDate && 'p-invalid'}`}
+                aria-label="Select End Date"
               ></nys-datepicker>
             </div>
           </div>
@@ -225,7 +238,9 @@ function App() {
               ref={selectNoticeRef}
               id="select-notice"
               value={selectedNotice}
-              disabled={isGenerating}>
+              disabled={isGenerating}
+              aria-disabled={isGenerating}
+              aria-label="Select Type">
               {demoData.monthlyNotices.map((item, i) => {
                 return <option key={i} value={item.value}>{item.label}</option>
               })}
@@ -241,7 +256,6 @@ function App() {
           <nys-button className="nys-margin-r-200" onClick={clearForm} label="Clear" variant="outline" disabled={isGenerating} fullWidth></nys-button>
           <nys-button onClick={handleGenerate} label="Generate" disabled={isGenerating} fullWidth></nys-button>
         </div>
-      </div>
     </form>)
 }
 
