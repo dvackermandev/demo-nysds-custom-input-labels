@@ -163,8 +163,8 @@ function App() {
               <nys-toggle 
                 ref={toggleRef}
                 id="docgen-toggle"
-                checked={allDates }
-                disabled={isGenerating} 
+                checked={allDates || isSos}
+                disabled={isGenerating || isSos} 
                 aria-disabled={isGenerating}
                 size="md" 
                 noIcon
