@@ -1,0 +1,46 @@
+{
+  "reportTypes": [
+    {
+      "label": "Documents",
+      "value": 1,
+      "items": [
+        {
+          "label": "Monthly Notice",
+          "value": "monthly-notice"
+        }
+      ]
+    },
+    {
+      "label": "Reports",
+      "value": 2,
+      "items": [
+        {
+          "label": "Report type 1",
+          "value": "r1"
+        },
+        {
+          "label": "Support Obligation Summary",
+          "value": "sos"
+        },
+        {
+          "label": "Report type 3",
+          "value": "r3"
+        }
+      ]
+    }
+  ],
+  "monthlyNotices": [
+    {
+      "label": "03/06/2026",
+      "value": "03/06/2026"
+    },
+    {
+      "label": "04/06/2026",
+      "value": "04/06/2026"
+    },
+    {
+      "label": "05/06/2026",
+      "value": "05/06/2026"
+    }
+  ]
+}

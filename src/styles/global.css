@@ -1,0 +1,43 @@
+#root{
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  text-align: left;
+}
+
+.outer-wrap{
+  display: flex;
+  flex-direction: column;
+  max-width: 600px;
+  width: 100%;
+}
+
+.message-inner-wrap{
+  display: block;
+  margin-top: -4px;
+}
+
+.error-response-message{
+  margin-bottom: 1rem;
+}
+
+label.input-label {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+}
+
+.input-label-wrap {
+  display: flex;
+  align-items:center;
+  height: 48px;
+  margin-right: 10px;
+}
+
+.input-label-wrap.toggle {
+  display: flex;
+  align-items:center;
+  height: 24px;
+  margin-right: 10px;
+}
