@@ -44,10 +44,7 @@ function App() {
   const toggleRef = useRef<any>(null)
   useEffect(() => {
     if (toggleRef.current) {
-      console.log(toggleRef.current)
       toggleRef.current.addEventListener('nys-change', (event: any) => {
-        const { checked } = event.detail;
-        console.log("hello", checked)
         setAllDates(event.detail.checked)
       })
     }
