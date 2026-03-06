@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import demoData from './demo-data.json';
-import './App.css'
 import './styles/global.css'
-import './styles/utilities.css'
 import Message from './Message';
 
 const defaultErrors = {
@@ -54,9 +52,6 @@ function App() {
   const beginDatepickerRef = useRef<any>(null)
   useEffect(() => {
     if (beginDatepickerRef.current) {
-      // POSSIBLE BUG: We need to add listeners for both nys-input and nys-blur events because
-      // the nys-input event does not fire when the value is entered by clicking
-      // the calendar ui.
       beginDatepickerRef.current.addEventListener('nys-blur', (event: any) => {
         setBegin(event.target.value)
       })
@@ -127,7 +122,7 @@ function App() {
   const invalidDateError = 'Please enter a valid value. The field is incomplete or has an invalid date.'
   return (
     <div className="outer-wrap">
-      <div className="nys-grid-row mb-2 sm:mb-4">
+      <div className="nys-grid-row nys-margin-b-250 sm:mb-4">
         <div className="nys-tablet:nys-grid-col-6">
           <div className="input-label-wrap nys-tablet:nys-flex-justify-end">
             <label htmlFor="select-type" className={`input-label ${errors.emptyDocType && 'error'} ${isGenerating && 'disabled'}`}>Type*</label>
@@ -149,7 +144,7 @@ function App() {
         </div>
       </div>
       {(isReport || isSos) && <>
-        <div className="nys-grid-row mb-2 sm:mb-4">
+        <div className="nys-grid-row nys-margin-b-250">
           <div className="nys-tablet:nys-grid-col-6">
             <div className="input-label-wrap toggle nys-tablet:nys-flex-justify-end">
               <label htmlFor='docgen-toggle' className={`input-label ${isGenerating && 'disabled'}`}>All Dates</label>
@@ -159,7 +154,7 @@ function App() {
             <nys-toggle ref={toggleRef} id="docgen-toggle" checked={allDates || isSos ? true : undefined} disabled={isGenerating || isSos ? true : undefined} size="md" icon={false} noIcon></nys-toggle>
           </div>
         </div>
-        <div className="nys-grid-row mb-2 sm:mb-4">
+        <div className="nys-grid-row nys-margin-b-250">
           <div className="nys-tablet:nys-grid-col-6">
             <div className="input-label-wrap nys-tablet:nys-flex-justify-end">
               <label htmlFor='begin-datepicker' className={`input-label ${(errors.emptyBeginDate || errors.futureBeginDate || errors.beginDateGreaterThanEndDate) && 'error'} ${(allDates || isGenerating || isSos) && 'disabled'}`}>Begin*</label>
@@ -183,7 +178,7 @@ function App() {
             ></nys-datepicker>
           </div>
         </div>
-        <div className="nys-grid-row mb-2 sm:mb-4">
+        <div className="nys-grid-row nys-margin-b-250 ">
           <div className="nys-tablet:nys-grid-col-6">
             <div className="input-label-wrap nys-tablet:nys-flex-justify-end">
               <label htmlFor='end-datepicker' className={`input-label ${(errors.emptyEndDate || errors.futureEndDate || errors.endDateLessThanBeginDate) && 'error'} ${(allDates || isGenerating || isSos) && 'disabled'}`}>End*</label>
@@ -209,7 +204,7 @@ function App() {
           </div>
         </div>
       </>}
-      {isDocument && <div className="nys-grid-row mb-2 sm:mb-4">
+      {isDocument && <div className="nys-grid-row nys-margin-b-250 sm:mb-4">
         <div className="nys-tablet:nys-grid-col-6">
           <div className="input-label-wrap nys-tablet:nys-flex-justify-end">
             <label htmlFor='select-notice' className={`input-label ${errors.emptyNotice && 'error'} ${isGenerating && 'disabled'}`}>Month &amp; Year*</label>
