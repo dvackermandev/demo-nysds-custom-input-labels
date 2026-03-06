@@ -120,10 +120,10 @@ function App() {
     const emptyEndDate = isReport && !end
     const futureBeginDate = isReport  && !!begin && new Date(begin) > new Date()
     const futureEndDate = isReport  && !!end && new Date(end) > new Date()
-    const beginDateGreaterThanEndDate = isReport && !!begin && !!end && begin > end
-    const endDateLessThanBeginDate = isReport && !!begin && !!end && end < begin
+    const beginDateGreaterThanEndDate = isReport && !!begin && !!end && new Date(begin) > new Date(end)
+    const endDateLessThanBeginDate = isReport && !!begin && !!end && new Date(end) < new Date(begin)
     setErrors(prev => ({...prev, emptyDocType, emptyNotice, emptyBeginDate, emptyEndDate, futureBeginDate, futureEndDate, beginDateGreaterThanEndDate ,endDateLessThanBeginDate}))
-    return (emptyDocType || emptyNotice || emptyBeginDate || emptyEndDate || futureBeginDate || futureEndDate)
+    return (emptyDocType || emptyNotice || emptyBeginDate || emptyEndDate || futureBeginDate || futureEndDate || beginDateGreaterThanEndDate || endDateLessThanBeginDate)
   }
 
   const invalidDateError = 'Please enter a valid value. The field is incomplete or has an invalid date.'
