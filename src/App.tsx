@@ -44,7 +44,10 @@ function App() {
   const toggleRef = useRef<any>(null)
   useEffect(() => {
     if (toggleRef.current) {
+      console.log(toggleRef.current)
       toggleRef.current.addEventListener('nys-change', (event: any) => {
+        const { checked } = event.detail;
+        console.log("hello", checked)
         setAllDates(event.detail.checked)
       })
     }
@@ -163,9 +166,9 @@ function App() {
               <nys-toggle 
                 ref={toggleRef}
                 id="docgen-toggle"
-                checked={allDates || isSos ? true : undefined}
-                disabled={isGenerating || isSos ? true : undefined} 
-                aria-disabled={isGenerating || isSos}
+                checked={allDates }
+                disabled={isGenerating} 
+                aria-disabled={isGenerating}
                 size="md" 
                 noIcon
                 aria-label="Toggle All Dates"></nys-toggle>
