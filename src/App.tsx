@@ -35,6 +35,7 @@ function App() {
   useEffect(() => {
     if (selectTypeRef.current) {
       selectTypeRef.current.addEventListener('nys-change', (event: any) => {
+        setErrors(prev => ({...prev, emptyDocType: false}))
         setDocType(event.detail.value)
       })
     }
@@ -53,9 +54,11 @@ function App() {
   useEffect(() => {
     if (beginDatepickerRef.current) {
       beginDatepickerRef.current.addEventListener('nys-blur', (event: any) => {
+        setErrors(prev => ({...prev, emptyBeginDate: false, futureBeginDate: false, beginDateGreaterThanEndDate: false}))
         setBegin(event.target.value)
       })
       beginDatepickerRef.current.addEventListener('nys-input', (event: any) => {
+        setErrors(prev => ({...prev, emptyBeginDate: false, futureBeginDate: false, beginDateGreaterThanEndDate: false}))
         setBegin(event.target.value)
       })
     }
@@ -65,10 +68,11 @@ function App() {
   useEffect(() => {
     if (endDatepickerRef.current) {
       endDatepickerRef.current.addEventListener('nys-blur', (event: any) => {
+        setErrors(prev => ({...prev, emptyEndDate: false, futureEndDate: false, endDateLessThanBeginDate: false}))
         setEnd(event.target.value)
       })
       endDatepickerRef.current.addEventListener('nys-input', (event: any) => {
-        console.log(event.target.value)
+        setErrors(prev => ({...prev, emptyEndDate: false, futureEndDate: false, endDateLessThanBeginDate: false}))
         setEnd(event.target.value)
       })
     }
@@ -78,16 +82,19 @@ function App() {
   useEffect(() => {
     if (selectNoticeRef.current) {
       selectNoticeRef.current.addEventListener('nys-change', (event: any) => {
+        setErrors(prev => ({...prev, emptyNotice: false}))
         setSelectedNotice(event.detail.value)
       })
     }
   })
   // End event handlers
-
   const clearForm = () => {
-    setDocType("")
-    setAllDates(false)
     setErrors(defaultErrors)
+    setDocType("")
+    setBegin("")
+    setEnd("")
+    setSelectedNotice("")
+    setAllDates(false)
     setSuccess(false)
   }
   const handleGenerate = async () => {
