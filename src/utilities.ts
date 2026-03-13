@@ -12,5 +12,5 @@ export function useEventListener(targetElement: any, eventName: any, eventHandle
     return () => {
       element.removeEventListener(eventName, eventHandler);
     };
-  }, [eventName, eventHandler, targetElement.current]);
+  }, [eventName, eventHandler, targetElement]);
 }
