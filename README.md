@@ -2,8 +2,6 @@
 - We have established that using html labels outside the nys element causes issues so we must use the provided label prop currently.
 - Using the provided label prop here only causes a minor design change.
 - nysds input events can be handled with a useEventListener() function located in /src/utilities.ts
-- Error handling can be managed using the nysds showError and errorMessage input props.
-
 
 ## Possible bugs
 - For nys-datepicker it seems that selecting the first day of the month doesn't emit an event.
