@@ -48,7 +48,6 @@ function App() {
     setErrors(prev => ({ ...prev, emptyBeginDate: false, futureBeginDate: false, beginDateGreaterThanEndDate: false }))
     setBegin(event.target.value)
   }
-  useEventListener(beginDatepickerRef, 'nys-blur', beginDatepickerHandler)
   useEventListener(beginDatepickerRef, 'nys-input', beginDatepickerHandler)
 
   const endDatepickerRef = useRef<any>(null)
@@ -56,7 +55,6 @@ function App() {
     setErrors(prev => ({ ...prev, emptyEndDate: false, futureEndDate: false, endDateLessThanBeginDate: false }))
     setEnd(event.target.value)
   }
-  useEventListener(endDatepickerRef, 'nys-blur', endDatepickerHandler)
   useEventListener(endDatepickerRef, 'nys-input', endDatepickerHandler)
 
   const selectNoticeRef = useRef<any>(null)
